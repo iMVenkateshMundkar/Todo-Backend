@@ -11,7 +11,8 @@ class TasksController {
 
     public getAllTasks = async (req: Request, res: Response, next: NextFunction) => {
         try {
-            const findAllTasksData: Task[] = await this.taskService.findAllTasks();
+            const userId: string = req.params.id;
+            const findAllTasksData: Task[] = await this.taskService.findAllTasks(userId);;
             res.status(200).json({data: findAllTasksData, message: 'findAllTasks'});
         } catch (error) {
             next(error);

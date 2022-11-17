@@ -10,8 +10,8 @@ class TaskService {
     public tasks = taskModel;
     public taskDao = new TaskDao();
 
-    public async findAllTasks(): Promise<Task[]> {
-        const tasks: Task[] = await this.taskDao.findAllTasks();
+    public async findAllTasks(userId: string): Promise<Task[]> {
+        const tasks: Task[] = await this.taskDao.findAllTasks(userId);
         return tasks;
     }
 
