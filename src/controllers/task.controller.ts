@@ -1,6 +1,8 @@
 import { CreateTaskDto } from "@/dtos/tasks.dto";
+import { HttpException } from "@/exceptions/HttpException";
 import { Task } from "@/interfaces/task.interface";
 import TaskService from "@/services/tasks.service";
+import { isEmpty } from "class-validator";
 import { NextFunction, Request, Response } from "express";
 
 
@@ -19,6 +21,7 @@ class TasksController {
     public getTaskById = async (req: Request, res: Response, next: NextFunction) => {
         try {
             const taskId: string = req.params.id;
+            console.log(taskId);
             const findOneTaskData: Task = await this.taskService.findTaskById(taskId);
             res.status(200).json({data: findOneTaskData, message: 'findOneTask'});
         } catch (error) {
@@ -48,7 +51,10 @@ class TasksController {
 
     public updateTask = async (req: Request, res: Response, next: NextFunction) => {
         try {
-            
+            const taskId: string = req.params.id;
+            const taskData: CreateTaskDto = req.body;
+            const updateTaskData = await this.taskService.updateTask(taskId, taskData);
+            res.status(200).json({data: updateTaskData, message: 'updateTask'});
         } catch (error) {
             next(error);
         }

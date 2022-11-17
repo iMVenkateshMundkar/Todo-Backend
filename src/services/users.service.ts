@@ -4,12 +4,14 @@ import { HttpException } from '@exceptions/HttpException';
 import { User } from '@interfaces/users.interface';
 import userModel from '@models/users.model';
 import { isEmpty } from '@utils/util';
+import UserDao from '@/dao/users.dao';
 
 class UserService {
   public users = userModel;
+  public userDao = new UserDao();
 
   public async findAllUser(): Promise<User[]> {
-    const users: User[] = await this.users.find();
+    const users: User[] = await this.userDao.findAllUsers();
     return users;
   }
 
@@ -25,7 +27,7 @@ class UserService {
   public async createUser(userData: CreateUserDto): Promise<User> {
     if (isEmpty(userData)) throw new HttpException(400, "userData is empty");
 
-    const findUser: User = await this.users.findOne({ email: userData.email });
+    const findUser: User = await this.userDao.findOneUser(userData.email)
     if (findUser) throw new HttpException(409, `This email ${userData.email} already exists`);
 
     const hashedPassword = await hash(userData.password, 10);
@@ -38,7 +40,7 @@ class UserService {
     if (isEmpty(userData)) throw new HttpException(400, "userData is empty");
 
     if (userData.email) {
-      const findUser: User = await this.users.findOne({ email: userData.email });
+      const findUser: User = await this.userDao.findOneUser(userData.email);
       if (findUser && findUser._id != userId) throw new HttpException(409, `This email ${userData.email} already exists`);
     }
 

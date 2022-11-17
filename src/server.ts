@@ -7,6 +7,6 @@ import TasksRoute from './routes/tasks.route';
 
 validateEnv();
 
-const app = new App([new IndexRoute(), new UsersRoute(), new AuthRoute(), new TasksRoute]);
+const app = new App([new IndexRoute(), new UsersRoute(), new AuthRoute(), new TasksRoute()]);
 
 app.listen();

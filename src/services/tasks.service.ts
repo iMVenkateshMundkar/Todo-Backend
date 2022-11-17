@@ -1,3 +1,4 @@
+import TaskDao from "@/dao/tasks.dao";
 import { CreateTaskDto } from "@/dtos/tasks.dto";
 import { HttpException } from "@/exceptions/HttpException";
 import { Task } from "@/interfaces/task.interface";
@@ -7,16 +8,17 @@ import { isEmpty } from "class-validator";
 
 class TaskService {
     public tasks = taskModel;
+    public taskDao = new TaskDao();
 
     public async findAllTasks(): Promise<Task[]> {
-        const tasks: Task[] = await this.tasks.find();
+        const tasks: Task[] = await this.taskDao.findAllTasks();
         return tasks;
     }
 
     public async findTaskById(taskId: string): Promise<Task> {
         if (isEmpty(taskId)) throw new HttpException(400, "TaskId is empty");
 
-        const findTask: Task = await this.tasks.findOne({_id: taskId});
+        const findTask: Task = await this.taskDao.findOneTask(taskId);
         if (!findTask) throw new HttpException(409, "Task doesn't exist");
         return findTask;
     }
@@ -38,7 +40,7 @@ class TaskService {
 
         if (taskData.startDate) throw new HttpException(409, "Start Date can not updated");
 
-        const updateTaskById: Task = await this.tasks.findByIdAndUpdate(taskId, {taskData});
+        const updateTaskById: Task = await this.tasks.findByIdAndUpdate(taskId, taskData);
         if (!updateTaskById) throw new HttpException(409, "Task doesn't exist");
 
         return updateTaskById;

@@ -4,7 +4,6 @@ import { Routes } from "@/interfaces/routes.interface";
 import validationMiddleware from "@/middlewares/validation.middleware";
 import { Router } from "express";
 
-
 class TasksRoute implements Routes {
     public path = '/tasks';
     public router = Router();
@@ -17,9 +16,9 @@ class TasksRoute implements Routes {
     private initializeRoutes(){
         this.router.get(`${this.path}`, this.tasksController.getAllTasks);
         this.router.get(`${this.path}/:id`, this.tasksController.getTaskById);
-        this.router.post(`${this.path}`, validationMiddleware(CreateTaskDto, 'body'), this.tasksController.createTask);
+        this.router.post(`${this.path}`, this.tasksController.createTask);
         this.router.delete(`${this.path}/:id`, this.tasksController.deleteTask);
-        this.router.put(`${this.path}/:id`, validationMiddleware(CreateTaskDto, 'body', true), this.tasksController.updateTask);
+        this.router.put(`${this.path}/:id`, this.tasksController.updateTask);
     }
 }
 

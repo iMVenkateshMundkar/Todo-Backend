@@ -3,9 +3,12 @@ import { CreateUserDto } from '@dtos/users.dto';
 import { RequestWithUser } from '@interfaces/auth.interface';
 import { User } from '@interfaces/users.interface';
 import AuthService from '@services/auth.service';
+import userDao from '@/dao/users.dao';
+import { HttpException } from '@/exceptions/HttpException';
 
 class AuthController {
   public authService = new AuthService();
+  public userDao = new userDao();
 
   public signUp = async (req: Request, res: Response, next: NextFunction) => {
     try {
@@ -21,10 +24,10 @@ class AuthController {
   public logIn = async (req: Request, res: Response, next: NextFunction) => {
     try {
       const userData: CreateUserDto = req.body;
-      const { cookie, findUser } = await this.authService.login(userData);
+      const { cookie, findUser, tokenData } = await this.authService.login(userData);
 
       res.setHeader('Set-Cookie', [cookie]);
-      res.status(200).json({ data: findUser, message: 'login' });
+      res.status(200).json({ data: {findUser, tokenData}, message: 'login' });
     } catch (error) {
       next(error);
     }
