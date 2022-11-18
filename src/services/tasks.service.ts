@@ -1,17 +1,31 @@
+import TasksController from "@/controllers/task.controller";
 import TaskDao from "@/dao/tasks.dao";
+import UserDao from "@/dao/users.dao";
 import { CreateTaskDto } from "@/dtos/tasks.dto";
 import { HttpException } from "@/exceptions/HttpException";
 import { Task } from "@/interfaces/task.interface";
+import { User } from "@/interfaces/users.interface";
 import taskModel from "@/models/task.model";
+import userModel from "@/models/users.model";
 import { isEmpty } from "class-validator";
 
 
 class TaskService {
     public tasks = taskModel;
     public taskDao = new TaskDao();
+    public users = userModel;
+    public userDao = new UserDao();
 
-    public async findAllTasks(userId: string): Promise<Task[]> {
-        const tasks: Task[] = await this.taskDao.findAllTasks(userId);
+    public async findAllTasksByUserId(userId: string): Promise<Task[]> {
+        if (isEmpty(userId)) throw new HttpException(400, "UserId is empty");
+        const findUser: User = await this.userDao.findOneUserById(userId);
+        if (!findUser) throw new HttpException(409, "User doesn't exist");
+        const tasks: Task[] = await this.taskDao.findAllTasksByUserId(userId);
+        return tasks;
+    }
+
+    public async findAllTasks(): Promise<Task[]> {
+        const tasks: Task[] = await this.taskDao.findAllTasks();
         return tasks;
     }
 
@@ -30,7 +44,7 @@ class TaskService {
     }
 
     public async deleteTask(taskId: string): Promise<Task> {
-        const deleteTaskById: Task = await this.tasks.findByIdAndDelete(taskId);
+        const deleteTaskById: Task = await this.tasks.findByIdAndUpdate(taskId, {deleted: true});
         if (!deleteTaskById) throw new HttpException(409, "Task doesn't exist");
         return deleteTaskById;
     }

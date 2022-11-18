@@ -9,8 +9,12 @@ class UserDao {
         return await this.users.find({});
     }
 
-    public async findOneUser(email: string): Promise<User>{
+    public async findOneUserByEmail(email: string): Promise<User>{
         return await this.users.findOne({email: email});
+    }
+
+    public async findOneUserById(userId: string): Promise<User>{
+        return await this.users.findById(userId);
     }
 
 }

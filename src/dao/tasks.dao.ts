@@ -5,8 +5,12 @@ import taskModel from "@/models/task.model";
 class TaskDao{
     public tasks = taskModel;
 
-    public async findAllTasks(userId: string): Promise<Task[]>{
-        return await this.tasks.find({userId: userId});
+    public async findAllTasksByUserId(userId: string): Promise<Task[]>{
+        return await this.tasks.find({userId: userId, deleted: false});
+    }
+
+    public async findAllTasks(): Promise<Task[]>{
+        return await this.tasks.find({});
     }
 
     public async deleteTask(taskId: string): Promise<Task>{

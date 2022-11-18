@@ -9,10 +9,19 @@ import { NextFunction, Request, Response } from "express";
 class TasksController {
     public taskService = new TaskService();
 
-    public getAllTasks = async (req: Request, res: Response, next: NextFunction) => {
+    public getAllTasksByUserId = async (req: Request, res: Response, next: NextFunction) => {
         try {
             const userId: string = req.params.id;
-            const findAllTasksData: Task[] = await this.taskService.findAllTasks(userId);;
+            const findAllTasksDataByUserId: Task[] = await this.taskService.findAllTasksByUserId(userId);
+            res.status(200).json({data: findAllTasksDataByUserId, message: 'findAllTasksByUserId'});
+        } catch (error) {
+            next(error);
+        }
+    }
+
+    public getAllTasks = async (req: Request, res: Response, next: NextFunction) => {
+        try {
+            const findAllTasksData: Task[] = await this.taskService.findAllTasks();
             res.status(200).json({data: findAllTasksData, message: 'findAllTasks'});
         } catch (error) {
             next(error);
@@ -54,6 +63,7 @@ class TasksController {
         try {
             const taskId: string = req.params.id;
             const taskData: CreateTaskDto = req.body;
+            console.log("TaskData for update",taskData);
             const updateTaskData = await this.taskService.updateTask(taskId, taskData);
             res.status(200).json({data: updateTaskData, message: 'updateTask'});
         } catch (error) {

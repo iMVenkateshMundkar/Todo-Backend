@@ -27,7 +27,7 @@ class UserService {
   public async createUser(userData: CreateUserDto): Promise<User> {
     if (isEmpty(userData)) throw new HttpException(400, "userData is empty");
 
-    const findUser: User = await this.userDao.findOneUser(userData.email)
+    const findUser: User = await this.userDao.findOneUserByEmail(userData.email)
     if (findUser) throw new HttpException(409, `This email ${userData.email} already exists`);
 
     const hashedPassword = await hash(userData.password, 10);
@@ -40,7 +40,7 @@ class UserService {
     if (isEmpty(userData)) throw new HttpException(400, "userData is empty");
 
     if (userData.email) {
-      const findUser: User = await this.userDao.findOneUser(userData.email);
+      const findUser: User = await this.userDao.findOneUserByEmail(userData.email);
       if (findUser && findUser._id != userId) throw new HttpException(409, `This email ${userData.email} already exists`);
     }
 

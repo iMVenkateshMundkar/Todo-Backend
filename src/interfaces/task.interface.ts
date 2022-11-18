@@ -7,4 +7,5 @@ export interface Task {
     startDate: Date;
     expiryDate: Date;
     userId: Schema.Types.ObjectId;
+    deleted: boolean;
 }

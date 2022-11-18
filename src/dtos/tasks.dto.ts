@@ -8,6 +8,7 @@ export class CreateTaskDto {
     public startDate: Date;
     public expiryDate: Date;
     public userId: Schema.Types.ObjectId;
+    public deleted: boolean;
 
     // @IsDate()
     // public startDate: Date;

@@ -15,7 +15,7 @@ class AuthService {
 
   public async signup(userData: CreateUserDto): Promise<User> {
     if (isEmpty(userData)) throw new HttpException(400, "userData is empty");
-    const findUser: User = await this.userDao.findOneUser(userData.email);
+    const findUser: User = await this.userDao.findOneUserByEmail(userData.email);
     if (findUser) throw new HttpException(409, `This email ${userData.email} already exists`);
 
     const hashedPassword = await hash(userData.password, 10);
@@ -27,23 +27,27 @@ class AuthService {
   public async login(userData: CreateUserDto): Promise<{ cookie: string; findUser: User; tokenData: TokenData }> {
     if (isEmpty(userData)) throw new HttpException(400, "userData is empty");
 
-    const findUser: User = await this.userDao.findOneUser(userData.email);
+    const findUser: User = await this.userDao.findOneUserByEmail(userData.email);
     if (!findUser) throw new HttpException(409, `This email ${userData.email} was not found`);
 
     const isPasswordMatching: boolean = await compare(userData.password, findUser.password);
     if (!isPasswordMatching) throw new HttpException(409, "Password is not matching");
 
+    
     const tokenData = this.createToken(findUser);
+
+    const findUserUpdate = await this.users.findByIdAndUpdate(findUser._id, {token: tokenData.token});
+
     const cookie = this.createCookie(tokenData);
 
     return { cookie, findUser, tokenData };
   }
 
-  public async logout(userData: User): Promise<User> {
-    if (isEmpty(userData)) throw new HttpException(400, "userData is empty");
-
-    const findUser: User = await this.users.findOne({ email: userData.email });
-    if (!findUser) throw new HttpException(409, `This email ${userData.email} was not found`);
+  public async logout(userId: string): Promise<User> {
+    if (isEmpty(userId)) throw new HttpException(400, "userId is empty");
+    console.log("In service", userId);
+    const findUser: User = await this.users.findById(userId);
+    if (!findUser) throw new HttpException(409, `This user was not found`);
 
     return findUser;
   }
