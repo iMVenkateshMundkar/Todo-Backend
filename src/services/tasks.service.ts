@@ -52,7 +52,7 @@ class TaskService {
     public async updateTask(taskId: string, taskData: CreateTaskDto): Promise<Task> {
         if(isEmpty(taskData)) throw new HttpException(400, "TaskData is empty");
 
-        if (taskData.startDate) throw new HttpException(409, "Start Date can not updated");
+        // if (taskData.startDate) throw new HttpException(409, "Start Date can not updated");
 
         const updateTaskById: Task = await this.tasks.findByIdAndUpdate(taskId, taskData);
         if (!updateTaskById) throw new HttpException(409, "Task doesn't exist");
